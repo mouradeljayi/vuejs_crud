@@ -1,26 +1,53 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="container mt-5">
+    <form @submit.prevent="addTodo">
+      <div class="form-group">
+        <input v-model="title" type="text" placeholder="Enter title" class="form-control">
+      </div>
+      <button type="submit" class="btn btn-primary">save</button>
+    </form>
+    <hr>
+    <ul>
+      <li v-for="todo in todos" :key="todo.id">
+        {{ todo.title }}
+      </li>
+    </ul>
+
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import axios from 'axios'
 export default {
   name: 'App',
-  components: {
-    HelloWorld
+  data() {
+    return {
+      title: '',
+      todos: {}
+    }
+  },
+  mounted() {
+    axios.get('http://localhost:8000/todos/')
+    .then(res => {
+      this.todos = res.data
+    }).catch(err => {
+      console.log(err)
+    })
+  },
+  methods: {
+    addTodo() {
+      axios.post('http://localhost:8000/todos/', {title: this.title})
+      .then(res => {
+        console.log(res)
+      }).catch(err => {
+        console.log(err)
+      })
+    }
   }
+ 
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>
